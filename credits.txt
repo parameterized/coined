@@ -1,0 +1,9 @@
+
+Music/Sound Attributions:
+
+select: https://freesound.org/people/Leszek_Szary/sounds/146721/
+jump: https://freesound.org/people/Leszek_Szary/sounds/146726/
+dash: https://freesound.org/people/Leszek_Szary/sounds/191592/
+grapple: https://freesound.org/people/Leszek_Szary/sounds/171521/
+treeChop: https://freesound.org/people/dheming/sounds/240980/
+treeFall: https://freesound.org/people/speedygonzo/sounds/257652/
