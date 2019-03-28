@@ -8,7 +8,7 @@ Resource Gathering Browser Game
 ## Playing
 Coined is currently being developed on [repl.it](https://repl.it/@parameterized/Coined)
 
-You can run locally with `python -m http.server`
+You can play on github [here](https://parameterized.github.io/coined/) or run locally with something like `python -m http.server`
 
 ## Controls
 - WASD to move
