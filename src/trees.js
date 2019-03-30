@@ -42,13 +42,13 @@ Tree.prototype.draw = function() {
   rotate(a);
   fill(96, 88, 86);
   if (player.activeItem === 'hatchet' && this.hoveredInPlayerRange() && this.life > 0) {
-    stroke(255, 255, 255);
+    stroke(255);
   }
   rect(-15, -150, 30, 150);
   ellipse(0.5, 0, 30, 30);
   noStroke();
   rect(-14, -16, 29, 16);
-  stroke(0, 0, 0);
+  stroke(0);
   tint(255, 255, 255, 80);
   if (this.life < 1) {
     image(gfx.treeCrack3, -15, -150);

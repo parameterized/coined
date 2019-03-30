@@ -60,6 +60,9 @@ plants.updateTile = function(i, j) {
   plants.removeTile(i, j);
   plants.tiles[i] = plants.tiles[i] || {};
   plants.tiles[i][j] = [];
+  if (i === 4 && j === -1) {
+    return;
+  }
   let et = earth.tiles;
   if (et[i] && et[i][j] && (et[i][j].pid === 8 || et[i][j].pid === 4
   || et[i][j].pid === 12 || et[i][j].pid === 13 || et[i][j].pid === 14)

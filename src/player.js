@@ -55,10 +55,13 @@ player.load = function() {
   player.pickaxePoint = null;
 
   player.activeItem = 'dash';
+  player.hatchetTimer = 0;
   player.pickaxeTimer = 0;
   player.wood = 0;
   player.dirt = 0;
   player.stone = 0;
+  player.gold = 0;
+  player.coins = 0;
 }
 
 player.resetGrapple = function() {
@@ -102,50 +105,19 @@ player.update = function(dt) {
     }
   }
 
+  player.hatchetTimer -= dt;
   player.pickaxeTimer -= dt;
 
-  player.pickaxePoint = null;
-  if (player.activeItem === 'pickaxe') {
-    let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
-    let wmy = constrain(mouseY, 0, 600) - 300 + cam.y;
-    let pos = player.body.getPosition();
-    let px = pos.x*meterScale, py = pos.y*meterScale;
-    let dx = wmx - px; dy = wmy - py;
-    let d = mag(dx, dy);
-    let p2 = Vec2(pos.x + dx/d*150/meterScale, pos.y + dy/d*150/meterScale);
-    player.rayCast.reset();
-    world.rayCast(pos, p2, player.rayCast.callback);
-    if (player.rayCast.hit) {
-      let hitPoint = player.rayCast.point;
-      player.pickaxePoint = {x: hitPoint.x*meterScale, y: hitPoint.y*meterScale};
-      if (mouseIsPressed && mouseButton === LEFT && player.pickaxeTimer < 0) {
-        earth.bomb(hitPoint.x*meterScale, hitPoint.y*meterScale);
-        player.pickaxeTimer = 1/3;
-      }
-    }
-  }
-}
-
-player.mousePressed = function() {
   let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
   let wmy = constrain(mouseY, 0, 600) - 300 + cam.y;
   let pos = player.body.getPosition();
   let px = pos.x*meterScale, py = pos.y*meterScale;
   let dx = wmx - px; dy = wmy - py;
-  let d = mag(dx, dy);
-  if (mouseButton === LEFT) {
-    switch (player.activeItem) {
-      case 'dash':
-        if (!player.dashed) {
-          let v = Vec2(dx/d*16, dy/d*16);
-          player.body.setLinearVelocity(v);
-          player.dashed = true;
-          player.dashedThisFrame = true;
-          effects.new({x: px, y: py, a: atan2(dx, -dy) + PI/2});
-          sfx.dash.play();
-        }
-        break;
-      case 'hatchet':
+  player.pickaxePoint = null;
+  switch (player.activeItem) {
+    case 'hatchet':
+      if (mouseIsPressed && mouseButton === LEFT
+      && !uiMouseDown && player.hatchetTimer < 0) {
         for (let i in trees.tiles) {
           for (let j in trees.tiles[i]) {
             let treeList = trees.tiles[i][j];
@@ -153,6 +125,7 @@ player.mousePressed = function() {
               let v = treeList[tli];
               if (v.hoveredInPlayerRange() && v.life > 0) {
                 v.life--;
+                player.hatchetTimer = 1/3;
                 if (px < v.x) {
                   v.fallDir = -1;
                 } else {
@@ -166,7 +139,53 @@ player.mousePressed = function() {
             }
           }
         }
-        break;
+      }
+      break;
+    case 'pickaxe':
+      let d = mag(dx, dy);
+      let p2 = Vec2(pos.x + dx/d*150/meterScale, pos.y + dy/d*150/meterScale);
+      player.rayCast.reset();
+      world.rayCast(pos, p2, player.rayCast.callback);
+      if (player.rayCast.hit) {
+        let hitPoint = player.rayCast.point;
+        player.pickaxePoint = {x: hitPoint.x*meterScale, y: hitPoint.y*meterScale};
+        if (mouseIsPressed && mouseButton === LEFT
+        && !uiMouseDown && player.pickaxeTimer < 0) {
+          let hx = hitPoint.x*meterScale, hy = hitPoint.y*meterScale
+          earth.bomb(hx, hy);
+          player.pickaxeTimer = 1/3;
+          let ts = earth.tileSize;
+          let type = earth.sample(floor(hx/ts), floor(hy/ts)).type;
+          switch (type) {
+            case 'grass':
+            case 'dirt':
+              sfx.dirt.play();
+              break;
+            default:
+            case 'rock':
+              sfx.rock.play();
+          }
+        }
+      }
+      break;
+  }
+}
+
+player.mousePressed = function() {
+  let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
+  let wmy = constrain(mouseY, 0, 600) - 300 + cam.y;
+  let pos = player.body.getPosition();
+  let px = pos.x*meterScale, py = pos.y*meterScale;
+  let dx = wmx - px; dy = wmy - py;
+  let d = mag(dx, dy);
+  if (mouseButton === LEFT) {
+    if (player.activeItem === 'dash' && !player.dashed) {
+      let v = Vec2(dx/d*16, dy/d*16);
+      player.body.setLinearVelocity(v);
+      player.dashed = true;
+      player.dashedThisFrame = true;
+      effects.new({x: px, y: py, a: atan2(dx, -dy) + PI/2});
+      sfx.dash.play();
     }
   } else if (mouseButton === RIGHT) {
     player.resetGrapple();

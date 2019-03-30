@@ -7,3 +7,6 @@ dash: https://freesound.org/people/Leszek_Szary/sounds/191592/
 grapple: https://freesound.org/people/Leszek_Szary/sounds/171521/
 treeChop: https://freesound.org/people/dheming/sounds/240980/
 treeFall: https://freesound.org/people/speedygonzo/sounds/257652/
+dirt: https://freesound.org/people/dr19/sounds/353907/
+rock: https://freesound.org/people/damsur/sounds/443243/
+gold: https://freesound.org/people/FullMetalJedi/sounds/427784/

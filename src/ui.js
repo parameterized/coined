@@ -5,7 +5,7 @@ ui.draw = function() {
   noStroke();
   fill(128, 128, 128, 100);
   rect(10, 10, 200, 144);
-  rect(650, 20, 140, 100);
+  rect(650, 20, 140, 160);
   fill(0, 0, 0);
   textAlign(LEFT, TOP);
   textSize(32);
@@ -25,6 +25,8 @@ ui.draw = function() {
   textAlign(RIGHT, TOP);
   let s = player.wood + ' wood\n';
   s += player.dirt + ' dirt\n';
-  s += player.stone + ' stone';
+  s += player.stone + ' stone\n';
+  s += player.gold + ' gold\n';
+  s += player.coins + ' coins';
   text(s, 780, 30);
 }

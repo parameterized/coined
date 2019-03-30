@@ -29,7 +29,10 @@ earth.sample = function(i, j) {
     } else if (y < 2000) {
       type = 'dirt';
     } else {
-      type = 'rock'
+      type = 'rock';
+      if (hash(i, j) < 0.004) {
+        type = 'gold';
+      }
     }
     return {density: d, type: type};
   }
@@ -38,25 +41,35 @@ earth.sample = function(i, j) {
 earth.bomb = function(x, y) {
   let ts = earth.tileSize;
   let bi = floor(x/ts), bj = floor(y/ts);
+  let goldHit = false;
   for (let i = bi - 1; i <= bi + 2; i++) {
     earth.modified[i] = earth.modified[i] || {};
     for (let j = bj - 1; j <= bj + 2; j++) {
-      let s = earth.sample(i, j);
-      let d = dist(x, y, i*ts, j*ts);
-      let density = min(s.density, d/(ts*2));
-      if (s.density >= 0.5 && density < 0.5) {
-        switch (s.type) {
-          case 'grass':
-          case 'dirt':
-            player.dirt++;
-            break;
-          case 'rock':
-            player.stone++;
-            break;
+      if (!(i === 4 && j === 0 || i === 5 && j === 0)) {
+        let s = earth.sample(i, j);
+        let d = dist(x, y, i*ts, j*ts);
+        let density = min(s.density, d/(ts*2));
+        if (s.density >= 0.5 && density < 0.5) {
+          switch (s.type) {
+            case 'grass':
+            case 'dirt':
+              player.dirt++;
+              break;
+            case 'rock':
+              player.stone++;
+              break;
+            case 'gold':
+              player.gold++;
+              goldHit = true;
+              break;
+          }
         }
+        earth.modified[i][j] = {density: density, type: s.type};
       }
-      earth.modified[i][j] = {density: density, type: s.type};
     }
+  }
+  if (goldHit) {
+    sfx.gold.play();
   }
   for (let i = bi - 2; i <= bi + 2; i++) {
     for (let j = bj - 2; j <= bj + 2; j++) {
@@ -126,19 +139,39 @@ earth.updateTile = function(i, j) {
   f2 = constrain(f2, 0.1, 0.9);
   f3 = constrain(f3, 0.1, 0.9);
   f4 = constrain(f4, 0.1, 0.9);
-  tile.type = s1.type;
+  tile.type = s2.type;
   let c = 1 + (0.5 - qa)*0.5;
-  switch (tile.type) {
+  switch (s2.type) {
     case 'grass':
       tile.color = color(62*c, 98*c, 89*c);
       break;
     case 'dirt':
       tile.color = color(82*c, 70*c, 50*c);
       break;
+    case 'gold':
+      if (q2b === 0) {
+        tile.type = 'rock';
+      }
+      // inherit color from rock
     default:
     case 'rock':
       tile.color = color(106*c, 107*c, 131*c);
       break;
+  }
+  if (tile.type === 'gold') {
+    tile.goldPoly = [];
+    let numPts = 20;
+    let a = hash(i + 1/2, j);
+    let b = hash(i, j + 1/2);
+    for (let vert_i=0; vert_i < numPts; vert_i++) {
+      let t = vert_i/numPts;
+      let r1 = sin(2*2*PI*ease.inOutQuad((t + a) % 1))/2 + 2;
+      let r2 = sin(3*2*PI*ease.inOutQuad((t + b) % 1))/2 + 2;
+      let r = min(r1, r2);
+      tile.goldPoly.push(Vec2(cos(t*2*PI)*r, -sin(t*2*PI)*r));
+    }
+    let s = 6 + hash(i + 1/2, j + 1/2)*4;
+    tile.goldPoly = tile.goldPoly.map(Vec2.scaleFn(s, s));
   }
   tile.pid = pid;
   let poly;
@@ -279,6 +312,7 @@ earth.draw = function() {
   let j1 = floor((cam.y - ssy/2)/ts) - 1;
   let j2 = floor((cam.y + ssy/2)/ts) + 1;
   let edges = [];
+  let gold = [];
   noStroke();
   for (let i=i1; i <= i2; i++) {
     if (earth.tiles[i]) {
@@ -297,6 +331,9 @@ earth.draw = function() {
           for (let e_i in v.edges) {
             edges.push({offset: Vec2(i*ts, j*ts), pts: v.edges[e_i]});
           }
+          if (v.type === 'gold') {
+            gold.push({x: i*ts, y: j*ts, poly: v.goldPoly});
+          }
         }
       }
     }
@@ -306,5 +343,15 @@ earth.draw = function() {
     let edge = edges[e_i];
     line(edge.offset.x + edge.pts[0].x, edge.offset.y + edge.pts[0].y,
       edge.offset.x + edge.pts[1].x, edge.offset.y + edge.pts[1].y);
+  }
+  fill(255, 215, 0);
+  for (let g_i in gold) {
+    let v = gold[g_i];
+    beginShape();
+    for (let vert_i in v.poly) {
+      let vert = v.poly[vert_i];
+      vertex(v.x + vert.x, v.y + vert.y);
+    }
+    endShape(CLOSE);
   }
 }

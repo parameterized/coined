@@ -2,6 +2,7 @@
 var ssx = 800, ssy = 600;
 var time = 0;
 var gameState = 'menu';
+var uiMouseDown = false;
 
 var gfx = {};
 var sfx = {};
@@ -16,6 +17,11 @@ function preload() {
   sfx.grapple = loadSound('sfx/grapple.wav');
   sfx.treeChop = loadSound('sfx/treeChop.wav');
   sfx.treeFall = loadSound('sfx/treeFall.wav');
+  sfx.dirt = loadSound('sfx/dirt.wav');
+  sfx.dirt.setVolume(0.4);
+  sfx.rock = loadSound('sfx/rock.wav');
+  sfx.rock.setVolume(0.6);
+  sfx.gold = loadSound('sfx/gold.wav');
 }
 
 function setup() {
@@ -29,6 +35,7 @@ function setup() {
   player.load();
   cam.load();
   earth.load();
+  coinMachine.load();
 }
 
 function update() {
@@ -51,15 +58,19 @@ function update() {
 function mousePressed() {
   if (gameState === 'menu') {
     menu.mousePressed();
+    uiMouseDown = true;
   } else if (gameState === 'playing') {
-    player.mousePressed()
+    if (!uiMouseDown) {
+      player.mousePressed()
+    }
   }
 }
 
 function mouseReleased() {
+  uiMouseDown = false;
   if (gameState === 'menu') {
     menu.mouseReleased();
-  } else if (gameState === 'playing') {
+  } else if (gameState === 'playing' && !uiMouseDown) {
 
   }
 }
@@ -76,7 +87,8 @@ function keyPressed() {
   if (gameState === 'menu') {
     menu.keyPressed();
   } else if (gameState == 'playing') {
-    player.keyPressed()
+    player.keyPressed();
+    coinMachine.keyPressed();
     switch (keyCode) {
       case 27: // escape
         gameState = 'menu';
@@ -88,6 +100,12 @@ function keyPressed() {
         player.resetGrapple();
         cam.x = player.spawnX;
         cam.y = player.spawnY;
+        break;
+      case 75: // k
+        let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
+        let wmy = constrain(mouseY, 0, 600) - 300 + cam.y;
+        let ts = earth.tileSize;
+        console.log(floor(wmx/ts), floor(wmy/ts));
         break;
     }
   }
@@ -108,11 +126,12 @@ function draw() {
     background(142, 168, 195);
     trees.draw();
     earth.draw();
+    coinMachine.draw();
     effects.draw();
     player.draw();
     plants.draw();
     if (player.activeItem === 'pickaxe' && player.pickaxePoint) {
-      fill(255, 255, 255);
+      fill(255);
       ellipse(player.pickaxePoint.x, player.pickaxePoint.y, 10, 10);
     }
 
