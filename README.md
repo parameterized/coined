@@ -16,3 +16,4 @@ You can play on github [here](https://parameterized.github.io/coined/) or run lo
 - Left click to use active item
 - Scroll or number keys to change active item
 - Right click to grapple
+- R to go back to spawn point
