@@ -1,5 +1,9 @@
 
-Music/Sound Attributions:
+Graphics:
+
+playerSheet: https://rvros.itch.io/animated-pixel-hero
+
+Music/Sound:
 
 select: https://freesound.org/people/Leszek_Szary/sounds/146721/
 jump: https://freesound.org/people/Leszek_Szary/sounds/146726/
@@ -10,3 +14,4 @@ treeFall: https://freesound.org/people/speedygonzo/sounds/257652/
 dirt: https://freesound.org/people/dr19/sounds/353907/
 rock: https://freesound.org/people/damsur/sounds/443243/
 gold: https://freesound.org/people/FullMetalJedi/sounds/427784/
+anvil: https://freesound.org/people/MrAuralization/sounds/274846/

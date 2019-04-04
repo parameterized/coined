@@ -32,6 +32,7 @@ Plant.prototype.update = function(dt) {
 }
 
 Plant.prototype.draw = function() {
+  push();
   translate(this.x, this.y);
   rotate(this.a);
   fill(67, 154, 134, 100);
@@ -43,8 +44,7 @@ Plant.prototype.draw = function() {
     vertex(v.x, v.y);
   }
   endShape(CLOSE);
-  rotate(-this.a);
-  translate(-this.x, -this.y);
+  pop();
 }
 
 
@@ -82,7 +82,7 @@ plants.updateTile = function(i, j) {
       for (let k=0; k < n_plants; k++) {
         let x = random(x1 + dx/n_plants*k, x1 + dx/n_plants*(k+1));
         let y = m*x + b;
-        plants.tiles[i][j].push(new Plant({x: i*ts + x, y: j*ts + y}));
+        plants.tiles[i][j].push(new Plant({x: i*ts + x, y: j*ts + y + 4}));
       }
     }
   }

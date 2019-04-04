@@ -11,6 +11,8 @@ function preload() {
   gfx.treeCrack1 = loadImage('gfx/treeCrack1.png');
   gfx.treeCrack2 = loadImage('gfx/treeCrack2.png');
   gfx.treeCrack3 = loadImage('gfx/treeCrack3.png');
+  gfx.playerSheet = loadImage('gfx/playerSheet.png');
+
   sfx.select = loadSound('sfx/select.wav');
   sfx.jump = loadSound('sfx/jump.wav');
   sfx.dash = loadSound('sfx/dash.wav');
@@ -22,6 +24,7 @@ function preload() {
   sfx.rock = loadSound('sfx/rock.wav');
   sfx.rock.setVolume(0.6);
   sfx.gold = loadSound('sfx/gold.wav');
+  sfx.anvil = loadSound('sfx/anvil.wav');
 }
 
 function setup() {
@@ -39,7 +42,7 @@ function setup() {
 }
 
 function update() {
-  let dt = min(1/frameRate(), 1/2);
+  let dt = min(1/frameRate(), 1/4);
   time += dt;
   document.body.style.cursor = 'default';
   if (gameState === 'menu') {
@@ -119,8 +122,9 @@ function draw() {
     background(195, 196, 158);
     menu.draw();
   } else if (gameState === 'playing') {
+    push();
     translate(round(-(cam.x - ssx/2)), round(-(cam.y - ssy/2)));
-
+    
     strokeWeight(1);
     stroke(0);
     background(142, 168, 195);
@@ -135,7 +139,7 @@ function draw() {
       ellipse(player.pickaxePoint.x, player.pickaxePoint.y, 10, 10);
     }
 
-    resetMatrix();
+    pop();
 
     ui.draw();
   }

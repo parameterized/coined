@@ -30,10 +30,16 @@ physics.load = function() {
     if (fA === player.jumpSensor.fixture) {
       if (fB !== player.fixture) {
         player.jumpContacts--;
+        if (player.jumpContacts === 0) {
+          player.fallTime = time;
+        }
       }
     } else if (fB === player.jumpSensor.fixture) {
       if (fA !== player.fixture) {
         player.jumpContacts--;
+        if (player.jumpContacts === 0) {
+          player.fallTime = time;
+        }
       }
     }
   });

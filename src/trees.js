@@ -14,8 +14,8 @@ function Tree(t) {
 }
 
 Tree.prototype.hoveredInPlayerRange = function() {
-  let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
-  let wmy = constrain(mouseY, 0, 600) - 300 + cam.y;
+  let wmx = constrain(mouseX, 0, ssx) - ssx/2 + cam.x;
+  let wmy = constrain(mouseY, 0, ssy) - ssy/2 + cam.y;
   let pos = player.body.getPosition();
   let px = pos.x*meterScale, py = pos.y*meterScale;
   let range = 150;
@@ -37,9 +37,9 @@ Tree.prototype.update = function(dt) {
 }
 
 Tree.prototype.draw = function() {
+  push();
   translate(round(this.x), round(this.y));
-  let a = -(1 - this.fallTimer)*PI/2*this.fallDir;
-  rotate(a);
+  rotate(-(1 - this.fallTimer)*PI/2*this.fallDir);
   fill(96, 88, 86);
   if (player.activeItem === 'hatchet' && this.hoveredInPlayerRange() && this.life > 0) {
     stroke(255);
@@ -49,7 +49,7 @@ Tree.prototype.draw = function() {
   noStroke();
   rect(-14, -16, 29, 16);
   stroke(0);
-  tint(255, 255, 255, 80);
+  //tint(255, 255, 255, 80); // tint has bad implementation, do pre-tint
   if (this.life < 1) {
     image(gfx.treeCrack3, -15, -150);
   } else if (this.life < 2) {
@@ -82,8 +82,7 @@ Tree.prototype.draw = function() {
     vertex(vx*sx, vy);
   }
   endShape(CLOSE);
-  rotate(-a);
-  translate(-round(this.x), -round(this.y));
+  pop();
 }
 
 

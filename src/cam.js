@@ -7,8 +7,8 @@ cam.load = function() {
 }
 
 cam.update = function(dt) {
-  let dmx = constrain(mouseX, 0, 800) - 400;
-  let dmy = constrain(mouseY, 0, 600) - 300;
+  let dmx = constrain(mouseX, 0, ssx) - ssx/2;
+  let dmy = constrain(mouseY, 0, ssy) - ssy/2;
   let pos = player.body.getPosition();
   let targetX = pos.x*meterScale + dmx*0.1
   let targetY = pos.y*meterScale + dmy*0.1;

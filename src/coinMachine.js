@@ -18,6 +18,7 @@ coinMachine.keyPressed = function() {
   if (keyCode === 69 && coinMachine.inRange()) { // e
     player.coins += player.gold;
     player.gold = 0;
+    sfx.anvil.play();
   }
 }
 

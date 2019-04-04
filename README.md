@@ -3,7 +3,7 @@
 
 Resource Gathering Browser Game
 
-![](https://i.imgur.com/wLBweIi.png)
+![](https://i.imgur.com/w6AvrUi.png)
 
 ## Playing
 Coined is currently being developed on [repl.it](https://repl.it/@parameterized/Coined)
@@ -17,3 +17,4 @@ You can play on github [here](https://parameterized.github.io/coined/) or run lo
 - Scroll or number keys to change active item
 - Right click to grapple
 - R to go back to spawn point
+- E to use
