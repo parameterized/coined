@@ -3,13 +3,30 @@ var earth = {};
 
 earth.camTile = {x: 0, y: 0};
 earth.tileSize = 50;
+earth.mapSize = 256;
+earth.density = {};
 earth.tiles = {};
 earth.modified = {};
 
 earth.load = function() {
   let ts = earth.tileSize;
+  //earth.generate();
   earth.camTile = {x: floor(cam.x/ts), y: floor(cam.y/ts)};
   earth.updateWindow();
+}
+
+earth.generate = function() {
+  let ms2 = floor(earth.mapSize/2);
+  for (let i=-ms2; i < ms2; i++) {
+    earth.density[i] = {};
+    for (let _j=-ms2; _j < ms2; _j++) {
+      let j = _j + floor(ms2/2);
+      let x = i*earth.tileSize, y = j*earth.tileSize;
+      let h = noise(x/800)*400;
+      let d = constrain((y - h)/400 + 0.5, 0, 1);
+      earth.density[i][j] = d;
+    }
+  }
 }
 
 earth.sample = function(i, j) {
@@ -37,6 +54,31 @@ earth.sample = function(i, j) {
     return {density: d, type: type};
   }
 }
+/*
+earth.sample = function(i, j) {
+  if (earth.modified[i] && earth.modified[i][j]) {
+    return earth.modified[i][j];
+  } else {
+    let x = i*earth.tileSize, y = j*earth.tileSize;
+    let d = 0;
+    if (earth.density[i] && earth.density[i][j]) {
+      d = earth.density[i][j];
+    }
+    let type;
+    if (y < 600) {
+      type = 'grass';
+    } else if (y < 2000) {
+      type = 'dirt';
+    } else {
+      type = 'rock';
+      if (hash(i, j) < 0.004) {
+        type = 'gold';
+      }
+    }
+    return {density: d, type: type};
+  }
+}
+*/
 
 earth.bomb = function(x, y) {
   let ts = earth.tileSize;
@@ -96,6 +138,7 @@ earth.bomb = function(x, y) {
         }
       }
       plants.updateTile(i, j);
+      rocks.updateTile(i, j);
     }
   }
 }

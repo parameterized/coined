@@ -12,11 +12,12 @@ function Plant(t) {
   if (!this.verts) {
     this.verts = [];
     let flip = random() < 0.5 ? 1 : -1;
-    this.verts.push({x: 0, y: 0});
-    this.verts.push({x: 5*flip, y: -6});
-    this.verts.push({x: 5*flip, y: -this.h});
-    this.verts.push({x: -2*flip, y: -10});
-    this.verts.push({x: -2*flip, y: -6});
+    this.verts.push(Vec2(0, 0));
+    this.verts.push(Vec2(5, -6));
+    this.verts.push(Vec2(5, -this.h));
+    this.verts.push(Vec2(-2, -10));
+    this.verts.push(Vec2(-2, -6));
+    this.verts = this.verts.map(Vec2.scaleFn(flip, 1));
   }
 }
 
@@ -78,7 +79,7 @@ plants.updateTile = function(i, j) {
     let b = y1 - m*x1;
     if (abs(m) < 1) {
       let dx = x2 - x1;
-      let n_plants = 2;
+      let n_plants = round(abs(x2 - x1)/ts*2);
       for (let k=0; k < n_plants; k++) {
         let x = random(x1 + dx/n_plants*k, x1 + dx/n_plants*(k+1));
         let y = m*x + b;

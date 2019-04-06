@@ -3,7 +3,7 @@
 
 Resource Gathering Browser Game
 
-![](https://i.imgur.com/w6AvrUi.png)
+![](https://i.imgur.com/kqGMi9M.png)
 
 ## Playing
 Coined is currently being developed on [repl.it](https://repl.it/@parameterized/Coined)

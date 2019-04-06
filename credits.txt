@@ -2,6 +2,7 @@
 Graphics:
 
 playerSheet: https://rvros.itch.io/animated-pixel-hero
+Background (sky, mountains, clouds): https://free-game-assets.itch.io/free-horizontal-game-backgrounds
 
 Music/Sound:
 

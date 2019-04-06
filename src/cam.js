@@ -6,6 +6,15 @@ cam.load = function() {
   cam.y = player.spawnY;
 }
 
+cam.set = function() {
+  push();
+  translate(round(-(cam.x - ssx/2)), round(-(cam.y - ssy/2)));
+}
+
+cam.reset = function() {
+  pop();
+}
+
 cam.update = function(dt) {
   let dmx = constrain(mouseX, 0, ssx) - ssx/2;
   let dmy = constrain(mouseY, 0, ssy) - ssy/2;

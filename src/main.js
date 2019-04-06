@@ -12,6 +12,10 @@ function preload() {
   gfx.treeCrack2 = loadImage('gfx/treeCrack2.png');
   gfx.treeCrack3 = loadImage('gfx/treeCrack3.png');
   gfx.playerSheet = loadImage('gfx/playerSheet.png');
+  gfx.sky = loadImage('gfx/sky.png');
+  gfx.mountains1 = loadImage('gfx/mountains1.png');
+  gfx.mountains2 = loadImage('gfx/mountains2.png');
+  gfx.mountains3 = loadImage('gfx/mountains3.png');
 
   sfx.select = loadSound('sfx/select.wav');
   sfx.jump = loadSound('sfx/jump.wav');
@@ -33,6 +37,7 @@ function setup() {
     return false;
   });
   strokeJoin(ROUND);
+  noiseSeed(0);
   menu.load();
   physics.load();
   player.load();
@@ -55,6 +60,7 @@ function update() {
     earth.update(dt);
     trees.update(dt);
     plants.update(dt);
+    rocks.update(dt);
   }
 }
 
@@ -122,25 +128,22 @@ function draw() {
     background(195, 196, 158);
     menu.draw();
   } else if (gameState === 'playing') {
-    push();
-    translate(round(-(cam.x - ssx/2)), round(-(cam.y - ssy/2)));
-    
     strokeWeight(1);
     stroke(0);
-    background(142, 168, 195);
+    cam.set();
+    bg.draw();
     trees.draw();
     earth.draw();
     coinMachine.draw();
     effects.draw();
     player.draw();
     plants.draw();
+    rocks.draw();
     if (player.activeItem === 'pickaxe' && player.pickaxePoint) {
       fill(255);
       ellipse(player.pickaxePoint.x, player.pickaxePoint.y, 10, 10);
     }
-
-    pop();
-
+    cam.reset();
     ui.draw();
   }
 }

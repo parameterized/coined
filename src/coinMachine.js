@@ -16,9 +16,14 @@ coinMachine.inRange = function() {
 
 coinMachine.keyPressed = function() {
   if (keyCode === 69 && coinMachine.inRange()) { // e
-    player.coins += player.gold;
-    player.gold = 0;
-    sfx.anvil.play();
+    // 1 gold + 2 wood = 6 coins
+    let coins = floor(min(player.gold*6, player.wood*3)/6)*6;
+    if (coins !== 0) {
+      player.coins += coins;
+      sfx.anvil.play();
+      player.gold -= coins/6;
+      player.wood -= coins/3;
+    }
   }
 }
 
@@ -37,4 +42,19 @@ coinMachine.draw = function() {
   vertex(x - 10, y + 0);
   endShape(CLOSE);
   stroke(0);
+  if (coinMachine.inRange()) {
+    fill(128, 128, 128, 100);
+    rect(x - 50, y - 150, 100, 100);
+    noStroke();
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(18);
+    let maxCoins = player.gold*6;
+    let coins = floor(min(player.gold*6, player.wood*3)/6)*6;
+    let s = '(' + player.wood + '/' + maxCoins/3 + ') wood\n';
+    s += player.gold + ' gold\n';
+    s += '(' + coins + '/' + maxCoins + ') coins\n';
+    text(s, x, y - 100);
+    stroke(0);
+  }
 }
