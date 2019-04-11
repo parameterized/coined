@@ -3,11 +3,11 @@ var plants = {};
 plants.tiles = {};
 
 function Plant(t) {
-  this.x = t.x || 0;
-  this.y = t.y || 0;
-  this.w = t.w || 10;
-  this.h = t.h || 20 + random(-5, 5);
-  this.a = t.a || 0;
+  this.x = orDefault(t.x, 0);
+  this.y = orDefault(t.y, 0);
+  this.w = orDefault(t.w, 10);
+  this.h = orDefault(t.h, 20 + random(-5, 5));
+  this.a = orDefault(t.a, 0);
   this.verts = t.verts;
   if (!this.verts) {
     this.verts = [];
@@ -61,7 +61,7 @@ plants.updateTile = function(i, j) {
   plants.removeTile(i, j);
   plants.tiles[i] = plants.tiles[i] || {};
   plants.tiles[i][j] = [];
-  if (i === 4 && j === -1) {
+  if (i === 4 && j === -1 || i === 11 && j === -1) {
     return;
   }
   let et = earth.tiles;

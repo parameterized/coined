@@ -24,6 +24,10 @@ function hash(x, y) {
   return abs(sin(x*12.9898 + y*4.1414)*43758.5453) % 1;
 }
 
+function orDefault(x, d) {
+  return typeof(x) !== 'undefined' ? x : d;
+}
+
 var ease = {
   inQuad: function (t) { return t*t },
   outQuad: function (t) { return t*(2-t) },

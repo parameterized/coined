@@ -3,12 +3,12 @@ var rocks = {};
 rocks.tiles = {};
 
 function Rock(t) {
-  this.x = t.x || 0;
-  this.y = t.y || 0;
-  this.w = t.w || 10;
-  this.h = t.h || 10;
-  this.s = t.s || random(0.8, 1.2);
-  this.a = t.a || 0;
+  this.x = orDefault(t.x, 0);
+  this.y = orDefault(t.y, 0);
+  this.w = orDefault(t.w, 10);
+  this.h = orDefault(t.h, 10);
+  this.s = orDefault(t.s, random(0.8, 1.2));
+  this.a = orDefault(t.a, 0);
   this.verts = t.verts;
   if (!this.verts) {
     this.verts = [];
@@ -51,9 +51,6 @@ rocks.updateTile = function(i, j) {
   rocks.removeTile(i, j);
   rocks.tiles[i] = rocks.tiles[i] || {};
   rocks.tiles[i][j] = [];
-  if (i === 4 && j === -1) {
-    return;
-  }
   let et = earth.tiles;
   if (et[i] && et[i][j] && (et[i][j].pid === 8 || et[i][j].pid === 4
   || et[i][j].pid === 12 || et[i][j].pid === 13 || et[i][j].pid === 14)

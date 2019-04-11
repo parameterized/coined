@@ -4,7 +4,7 @@ var earth = {};
 earth.camTile = {x: 0, y: 0};
 earth.tileSize = 50;
 earth.mapSize = 256;
-earth.density = {};
+//earth.density = {};
 earth.tiles = {};
 earth.modified = {};
 
@@ -15,6 +15,7 @@ earth.load = function() {
   earth.updateWindow();
 }
 
+/*
 earth.generate = function() {
   let ms2 = floor(earth.mapSize/2);
   for (let i=-ms2; i < ms2; i++) {
@@ -28,15 +29,22 @@ earth.generate = function() {
     }
   }
 }
+*/
 
 earth.sample = function(i, j) {
   if (earth.modified[i] && earth.modified[i][j]) {
     return earth.modified[i][j];
   } else {
     let x = i*earth.tileSize, y = j*earth.tileSize;
+    /*
     let d = sin(y/100 - 200)*0.5 + 0.5;
     d *= sin(x/200)*0.5 + 0.5;
     d = pow(d, 0.5);
+    */
+    let d1 = (sin(y/100 - 200)*0.5 + 0.5)*0.8
+    let d2 = (sin(x/200)*0.5 + 0.5)*3;
+    let d = min(d1, d2) + noise(x/400, y/400)*0.6 - 0.3;
+
     if (y < 0) {
       d = 0;
     }
@@ -87,7 +95,8 @@ earth.bomb = function(x, y) {
   for (let i = bi - 1; i <= bi + 2; i++) {
     earth.modified[i] = earth.modified[i] || {};
     for (let j = bj - 1; j <= bj + 2; j++) {
-      if (!(i === 4 && j === 0 || i === 5 && j === 0)) {
+      if (!(i === 4 && j === 0 || i === 5 && j === 0
+      || i === 11 && j === 0 || i === 12 && j === 0)) {
         let s = earth.sample(i, j);
         let d = dist(x, y, i*ts, j*ts);
         let density = min(s.density, d/(ts*2));

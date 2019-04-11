@@ -9,36 +9,36 @@ menu.sliders = {'main': [], 'options': []};
 menu.heldSlider = null;
 
 menu.addLabel = function(t) {
-  t.state = t.state || 'main';
-  t.text = t.text || 'Label';
-  t.textSize = t.textSize || 32;
-  t.x = t.x || ssx/2;
-  t.y = t.y || ssy/2;
+  t.state = orDefault(t.state, 'main');
+  t.text = orDefault(t.text, 'Label');
+  t.textSize = orDefault(t.textSize, 32);
+  t.x = orDefault(t.x, ssx/2);
+  t.y = orDefault(t.y, ssy/2);
   menu.labels[t.state].push(t);
   return t;
 }
 
 menu.addButton = function(t) {
-  t.state = t.state || 'main';
-  t.text = t.text || 'Button';
-  t.x = t.x || ssx/2;
-  t.y = t.y || ssy/2;
+  t.state = orDefault(t.state, 'main');
+  t.text = orDefault(t.text, 'Button');
+  t.x = orDefault(t.x, ssx/2);
+  t.y = orDefault(t.y, ssy/2);
   let _ts = textSize();
   textSize(24);
-  t.w = t.w || textWidth(t.text) + 60;
-  t.h = t.h || textSize() + 36;
+  t.w = orDefault(t.w, textWidth(t.text) + 60);
+  t.h = orDefault(t.h, textSize() + 36);
   textSize(_ts);
-  t.action = t.action || function() {};
+  t.action = orDefault(t.action, function() {});
   menu.buttons[t.state].push(t);
   return t;
 }
 
 menu.addSlider = function(t) {
-  t.state = t.state || 'main';
-  t.x = t.x || ssx/2;
-  t.y = t.y || ssy/2;
-  t.w = t.w || 200;
-  t.val = t.val || 0.5;
+  t.state = orDefault(t.state, 'main');
+  t.x = orDefault(t.x, ssx/2);
+  t.y = orDefault(t.y, ssy/2);
+  t.w = orDefault(t.w, 200);
+  t.val = orDefault(t.val, 0.5);
   menu.sliders[t.state].push(t);
   return t;
 }

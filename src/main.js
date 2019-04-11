@@ -16,6 +16,8 @@ function preload() {
   gfx.mountains1 = loadImage('gfx/mountains1.png');
   gfx.mountains2 = loadImage('gfx/mountains2.png');
   gfx.mountains3 = loadImage('gfx/mountains3.png');
+  gfx.portalSheet = loadImage('gfx/portalSheet.png');
+  gfx.portalHighlightSheet = loadImage('gfx/portalHighlightSheet.png');
 
   sfx.select = loadSound('sfx/select.wav');
   sfx.jump = loadSound('sfx/jump.wav');
@@ -44,6 +46,8 @@ function setup() {
   cam.load();
   earth.load();
   coinMachine.load();
+  portal.load();
+  tutorial.load();
 }
 
 function update() {
@@ -98,17 +102,16 @@ function keyPressed() {
   } else if (gameState == 'playing') {
     player.keyPressed();
     coinMachine.keyPressed();
+    portal.keyPressed();
     switch (keyCode) {
       case 27: // escape
         gameState = 'menu';
         break;
       case 82: // r
-        player.body.setPosition(Vec2(player.spawnX/meterScale, player.spawnY/meterScale));
-        player.body.setLinearVelocity(Vec2(0, 0));
-        player.dashed = true;
-        player.resetGrapple();
-        cam.x = player.spawnX;
-        cam.y = player.spawnY;
+        player.resetPosition();
+        break;
+      case 84: // t
+        player.resetPosition(0, -10000 - 200);
         break;
       case 75: // k
         let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
@@ -134,7 +137,9 @@ function draw() {
     bg.draw();
     trees.draw();
     earth.draw();
+    tutorial.draw();
     coinMachine.draw();
+    portal.draw();
     effects.draw();
     player.draw();
     plants.draw();

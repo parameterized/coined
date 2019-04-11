@@ -5,8 +5,8 @@ trees.tiles = {};
 function Tree(t) {
   this.x = t.x;
   this.y = t.y;
-  this.w = t.w || random(140, 200);
-  this.h = t.h || random(400, 450);
+  this.w = orDefault(t.w, random(140, 200));
+  this.h = orDefault(t.h, random(400, 450));
   this.alive = true;
   this.life = 3;
   this.fallTimer = 1;
@@ -98,6 +98,9 @@ trees.updateTile = function(i, j) {
   trees.removeTile(i, j);
   trees.tiles[i] = trees.tiles[i] || {};
   trees.tiles[i][j] = [];
+  if (i === 4 && j === -1 || i === 11 && j === -1) {
+    return;
+  }
   let et = earth.tiles;
   if (et[i] && et[i][j] && (et[i][j].pid === 8 || et[i][j].pid === 4
   || et[i][j].pid === 12 || et[i][j].pid === 13 || et[i][j].pid === 14)

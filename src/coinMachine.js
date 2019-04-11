@@ -3,7 +3,7 @@ var coinMachine = {}
 
 coinMachine.load = function() {
   coinMachine.x = 100*PI - 90;
-  coinMachine.y = -44;
+  coinMachine.y = -32;
 }
 
 coinMachine.inRange = function() {

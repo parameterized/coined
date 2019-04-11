@@ -29,11 +29,13 @@ player.load = function() {
 
   player.jumpSensor = {};
   let js = player.jumpSensor;
-  js.shape = planck.Circle(Vec2(0, 26/meterScale), 18/meterScale);
+  // prev 0,26
+  js.shape = planck.Circle(Vec2(0, 34/meterScale), 18/meterScale);
   js.fixture = player.body.createFixture(js.shape, 1);
   js.fixture.setSensor(true);
 
   player.jumpContacts = 0;
+  player.doubleJumped = true;
   player.dashed = true;
   player.dashedThisFrame = true;
 
@@ -79,6 +81,16 @@ player.resetGrapple = function() {
   }
 }
 
+player.resetPosition = function(x, y) {
+  x = orDefault(x, player.spawnX);
+  y = orDefault(y, player.spawnY);
+  player.body.setPosition(Vec2(x/meterScale, y/meterScale));
+  player.body.setLinearVelocity(Vec2(0, 0));
+  player.dashed = true;
+  player.resetGrapple();
+  cam.x = x, cam.y = y;
+}
+
 player.update = function(dt) {
   let lv = player.body.getLinearVelocity();
   let p = player.body.getWorldPoint(Vec2(0, 0));
@@ -102,6 +114,7 @@ player.update = function(dt) {
       player.jumping = true;
     }
   } else {
+    player.doubleJumped = false;
     if (!player.dashedThisFrame) {
       player.dashed = false;
     }
@@ -292,6 +305,7 @@ player.mousePressed = function() {
       let rj = player.ropeJoint;
       let rja = rj.getAnchorA(), rjb = rj.getAnchorB();
       if (rja.y > rjb.y - abs(rja.x - rjb.x)) {
+        player.doubleJumped = false;
         player.dashed = false;
       }
       sfx.grapple.play();
@@ -315,29 +329,31 @@ player.mouseWheel = function(event) {
   }
 }
 
-player.keyPressed = function() {
+player.jump = function() {
   let lv = player.body.getLinearVelocity();
+  lv.y = -10;
+  sfx.jump.play();
+  player.jumping = true;
+  player.jumpTime = time;
+  player.frame = 10;
+  player.frameTimer = 1;
+}
+
+player.keyPressed = function() {
   let rj = player.ropeJoint;
   switch (keyCode) {
     case 32: // space
       if (player.jumpContacts !== 0) {
-        lv.y = -10;
-        sfx.jump.play();
-        player.jumping = true;
-        player.jumpTime = time;
-        player.frame = 10;
-        player.frameTimer = 1;
+        player.jump();
       } else if (rj) {
         let rja = rj.getAnchorA(), rjb = rj.getAnchorB();
         if (rja.y > rjb.y - abs(rja.x - rjb.x)) {
-          lv.y = -10;
-          sfx.jump.play();
-          player.jumping = true;
-          player.jumpTime = time;
-          player.frame = 10;
-          player.frameTimer = 1;
+          player.jump();
         }
         player.resetGrapple();
+      } else if (!player.doubleJumped) {
+        player.jump();
+        player.doubleJumped = true;
       }
       break;
     case 17: // ctrl
@@ -355,9 +371,9 @@ player.keyPressed = function() {
   }
 }
 
-let frame2xy = function(i) {
+player.frame2xy = function(i) {
   let spriteW = 92;
-  return {x: i*spriteW, y: 0}
+  return {x: i*spriteW, y: 0};
 }
 
 player.draw = function() {
@@ -378,12 +394,12 @@ player.draw = function() {
     ellipse(apx, apy, 10, 10);
   }
   fill(142, 65, 98);
-  //drawBody(player.body);
+  //drawBody(player.body, true);
   push();
   translate(round(px), round(py));
   scale(player.dir, 1);
   let spriteW = 92, spriteH = 107;
-  let framePos = frame2xy(player.frame);
+  let framePos = player.frame2xy(player.frame);
   image(gfx.playerSheet, -spriteW/2, -spriteH + 40 + 4,
     spriteW, spriteH, framePos.x, framePos.y, spriteW, spriteH);
   pop();

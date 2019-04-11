@@ -4,7 +4,6 @@ var physics = {};
 var Vec2 = planck.Vec2;
 var meterScale = 64;
 var world;
-var groundBody;
 
 physics.load = function() {
   world = planck.World({
