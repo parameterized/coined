@@ -17,12 +17,17 @@ coinMachine.inRange = function() {
 coinMachine.keyPressed = function() {
   if (keyCode === 69 && coinMachine.inRange()) { // e
     // 1 gold + 2 wood = 6 coins
-    let coins = floor(min(player.gold*6, player.wood*3)/6)*6;
-    if (coins !== 0) {
-      player.coins += coins;
+    let numCoins = floor(min(player.gold*6, player.wood*3)/6)*6;
+    if (numCoins !== 0) {
+      //player.coins += coins;
+      for (let i=0; i < numCoins; i++) {
+        setTimeout(function() {
+          coins.spawn(coinMachine.x, coinMachine.y);
+        }, i*100);
+      }
       sfx.anvil.play();
-      player.gold -= coins/6;
-      player.wood -= coins/3;
+      player.gold -= numCoins/6;
+      player.wood -= numCoins/3;
     }
   }
 }

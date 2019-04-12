@@ -72,6 +72,10 @@ player.load = function() {
   player.stone = 0;
   player.gold = 0;
   player.coins = 0;
+
+  player.teleporting = false;
+  player.teleportTimer = 0;
+  player.teleportAction = function() {};
 }
 
 player.resetGrapple = function() {
@@ -89,6 +93,19 @@ player.resetPosition = function(x, y) {
   player.dashed = true;
   player.resetGrapple();
   cam.x = x, cam.y = y;
+}
+
+player.teleport = function(x, y, action) {
+  x = orDefault(x, player.spawnX);
+  y = orDefault(y, player.spawnY);
+  player.teleportAction = orDefault(action, function() {
+    player.resetPosition(x, y);
+  });
+  player.teleporting = true;
+  player.teleportTimer = 1;
+  player.resetGrapple();
+  player.body.setActive(false);
+  sfx.teleport.play();
 }
 
 player.update = function(dt) {
@@ -228,7 +245,7 @@ player.update = function(dt) {
       break;
   }
   player.frameTimer -= fps*dt;
-  if (player.frameTimer < 0) {
+  if (player.frameTimer < 0 && !player.teleporting) {
     player.frameTimer = max(player.frameTimer + 1, 0);
     switch (player.anim) {
       default:
@@ -267,6 +284,15 @@ player.update = function(dt) {
             break;
         }
         break;
+    }
+  }
+
+  if (player.teleporting) {
+    player.teleportTimer -= dt*2;
+    if (player.teleportTimer < 0) {
+      player.teleporting = false;
+      player.body.setActive(true);
+      player.teleportAction();
     }
   }
 }
@@ -368,6 +394,12 @@ player.keyPressed = function() {
     case 51: // 3
       player.activeItem = 'pickaxe';
       break;
+    case 82: // r
+      player.teleport();
+      break;
+    case 84: // t
+      player.teleport(0, -10000 - 200);
+      break;
   }
 }
 
@@ -398,9 +430,17 @@ player.draw = function() {
   push();
   translate(round(px), round(py));
   scale(player.dir, 1);
-  let spriteW = 92, spriteH = 107;
   let framePos = player.frame2xy(player.frame);
-  image(gfx.playerSheet, -spriteW/2, -spriteH + 40 + 4,
-    spriteW, spriteH, framePos.x, framePos.y, spriteW, spriteH);
+  let spriteW = 92, spriteH = 107;
+  let x = -spriteW/2, y = -spriteH + 40 + 4;
+  if (player.teleporting) {
+  spriteH *= ease.inOutQuad(player.teleportTimer);
+  }
+  image(gfx.playerSheet, x, y, spriteW, spriteH,
+    framePos.x, framePos.y, spriteW, spriteH);
+  if (player.teleporting) {
+    fill(155, 243, 240);
+    rect(-30, y + spriteH - 2, 60, 4);
+  }
   pop();
 }

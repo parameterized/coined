@@ -25,7 +25,11 @@ function hash(x, y) {
 }
 
 function orDefault(x, d) {
-  return typeof(x) !== 'undefined' ? x : d;
+  if (typeof(x) === 'undefined' || x === null) {
+    return d;
+  } else {
+    return x;
+  }
 }
 
 var ease = {

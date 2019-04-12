@@ -18,6 +18,7 @@ function preload() {
   gfx.mountains3 = loadImage('gfx/mountains3.png');
   gfx.portalSheet = loadImage('gfx/portalSheet.png');
   gfx.portalHighlightSheet = loadImage('gfx/portalHighlightSheet.png');
+  gfx.coinSheet = loadImage('gfx/coinSheet.png');
 
   sfx.select = loadSound('sfx/select.wav');
   sfx.jump = loadSound('sfx/jump.wav');
@@ -31,6 +32,8 @@ function preload() {
   sfx.rock.setVolume(0.6);
   sfx.gold = loadSound('sfx/gold.wav');
   sfx.anvil = loadSound('sfx/anvil.wav');
+  sfx.teleport = loadSound('sfx/teleport.wav');
+  sfx.teleport.setVolume(0.4);
 }
 
 function setup() {
@@ -65,6 +68,7 @@ function update() {
     trees.update(dt);
     plants.update(dt);
     rocks.update(dt);
+    coins.update(dt);
   }
 }
 
@@ -107,17 +111,12 @@ function keyPressed() {
       case 27: // escape
         gameState = 'menu';
         break;
-      case 82: // r
-        player.resetPosition();
-        break;
-      case 84: // t
-        player.resetPosition(0, -10000 - 200);
-        break;
       case 75: // k
         let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
         let wmy = constrain(mouseY, 0, 600) - 300 + cam.y;
         let ts = earth.tileSize;
         console.log(floor(wmx/ts), floor(wmy/ts));
+        coins.spawn(wmx, wmy);
         break;
     }
   }
@@ -144,6 +143,7 @@ function draw() {
     player.draw();
     plants.draw();
     rocks.draw();
+    coins.draw();
     if (player.activeItem === 'pickaxe' && player.pickaxePoint) {
       fill(255);
       ellipse(player.pickaxePoint.x, player.pickaxePoint.y, 10, 10);

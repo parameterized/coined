@@ -3,6 +3,7 @@ Graphics:
 
 playerSheet: https://rvros.itch.io/animated-pixel-hero
 Background (sky, mountains, clouds): https://free-game-assets.itch.io/free-horizontal-game-backgrounds
+coinSheet: https://www.gamedevmarket.net/asset/game-collectable-pack-pixelart/
 
 Music/Sound:
 
@@ -10,6 +11,7 @@ select: https://freesound.org/people/Leszek_Szary/sounds/146721/
 jump: https://freesound.org/people/Leszek_Szary/sounds/146726/
 dash: https://freesound.org/people/Leszek_Szary/sounds/191592/
 grapple: https://freesound.org/people/Leszek_Szary/sounds/171521/
+teleport: https://freesound.org/people/Leszek_Szary/sounds/172206/
 treeChop: https://freesound.org/people/dheming/sounds/240980/
 treeFall: https://freesound.org/people/speedygonzo/sounds/257652/
 dirt: https://freesound.org/people/dr19/sounds/353907/

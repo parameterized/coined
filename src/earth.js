@@ -143,11 +143,20 @@ earth.bomb = function(x, y) {
           }
         }
         if (!isFalling) {
-          trees.updateTile(i, j);
+          if (trees.tiles[i]) {
+            trees.removeTile(i, j);
+            trees.tiles[i][j] = [];
+          }
         }
       }
-      plants.updateTile(i, j);
-      rocks.updateTile(i, j);
+      if (plants.tiles[i]) {
+        plants.removeTile(i, j);
+        plants.tiles[i][j] = [];
+      }
+      if (rocks.tiles[i]) {
+        rocks.removeTile(i, j);
+        rocks.tiles[i][j] = [];
+      }
     }
   }
 }

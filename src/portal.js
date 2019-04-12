@@ -16,17 +16,24 @@ portal.inRange = function() {
 
 portal.keyPressed = function() {
   if (keyCode === 69 && portal.inRange()) { // e
-    player.resetPosition();
-    earth.tiles = {};
-    earth.modified = {};
-    earth.updateWindow();
-    // todo: updateWindow functions
-    trees.tiles = {};
-    trees.update(0);
-    plants.tiles = {};
-    plants.update(0);
-    rocks.tiles = {};
-    rocks.update(0);
+    player.teleport(0, 0, function() {
+      player.resetPosition();
+      for (let i in earth.tiles) {
+        for (let j in earth.tiles[i]) {
+          earth.removeTile(i, j);
+        }
+      }
+      earth.tiles = {};
+      earth.modified = {};
+      earth.updateWindow();
+      // todo: updateWindow functions
+      trees.tiles = {};
+      trees.update(0);
+      plants.tiles = {};
+      plants.update(0);
+      rocks.tiles = {};
+      rocks.update(0);
+    });
   }
 }
 
