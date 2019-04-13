@@ -3,11 +3,12 @@ var physics = {};
 
 var Vec2 = planck.Vec2;
 var meterScale = 64;
+var gravity = 16;
 var world;
 
 physics.load = function() {
   world = planck.World({
-    gravity: Vec2(0, 30)
+    gravity: Vec2(0, 0)
   });
 
   world.on('begin-contact', function(contact) {

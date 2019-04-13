@@ -4,7 +4,7 @@ var player = {};
 player.load = function() {
   player.acceleration = 16;
   player.maxSpeed = 8;
-  player.friction = 2;
+  player.friction = 4;
   player.spawnX = 100*PI;
   player.spawnY = -200;
   player.dir = 1;
@@ -23,9 +23,10 @@ player.load = function() {
     allowSleep: false,
     bullet: true
   });
-  player.body.createFixture(planck.Box(19/meterScale, 19/meterScale), 1/3);
-  player.body.createFixture(planck.Circle(Vec2(0, 20/meterScale), 20/meterScale), 1/3);
-  player.body.createFixture(planck.Circle(Vec2(0, -20/meterScale), 20/meterScale), 1/3);
+  let fixDef = {density: 1/3, friction: 0, restitution: 0};
+  player.body.createFixture(planck.Box(19/meterScale, 19/meterScale), fixDef);
+  player.body.createFixture(planck.Circle(Vec2(0, 20/meterScale), 20/meterScale), fixDef);
+  player.body.createFixture(planck.Circle(Vec2(0, -20/meterScale), 20/meterScale), fixDef);
 
   player.jumpSensor = {};
   let js = player.jumpSensor;
@@ -111,40 +112,66 @@ player.teleport = function(x, y, action) {
 player.update = function(dt) {
   let lv = player.body.getLinearVelocity();
   let p = player.body.getWorldPoint(Vec2(0, 0));
-  if (keyIsDown(68)) { // d
-    if (lv.x < player.maxSpeed) {
-      player.body.applyForce(Vec2(player.acceleration, 0), p, true);
-    }
-  }
-  if (keyIsDown(65)) { //a
-    if (lv.x > -player.maxSpeed) {
-      player.body.applyForce(Vec2(-player.acceleration, 0), p, true);
-    }
-  }
-  player.running = false;
-  if (abs(lv.x) > 1) {
-    player.dir = lv.x < 0 ? -1 : 1;
-    player.running = true;
-  }
+
+  let p2 = Vec2(p.x, p.y + 100/meterScale);
+  let normal = Vec2(0, -1);
+  let tangent = Vec2(1, 0);
+
   if (player.jumpContacts === 0) {
+    player.body.applyForce(Vec2(0, gravity), p, true);
     if (time - player.fallTime > 1/4) {
       player.jumping = true;
     }
   } else {
+    player.rayCast.reset();
+    world.rayCast(p, p2, player.rayCast.callback);
+    if (player.rayCast.hit) {
+      normal = player.rayCast.normal;
+      tangent = Vec2(-normal.y, normal.x);
+    }
+
+    let s = -gravity;
+    player.body.applyForce(Vec2.scaleFn(s, s)(normal), p, true);
+
     player.doubleJumped = false;
     if (!player.dashedThisFrame) {
       player.dashed = false;
     }
+
     // no friction if accelerating to max (same speed in air)
     if (abs(lv.x) > player.maxSpeed || !(keyIsDown(68) || keyIsDown(65))) {
-      player.body.applyForce(Vec2(-player.friction*lv.x, 0), p, true);
+      //player.body.applyForce(Vec2(-player.friction*lv.x, 0), p, true);
+      let s = -player.friction*lv.x;
+      player.body.applyForce(Vec2.scaleFn(s, s)(tangent), p, true);
     }
+
     if (player.jumping && time - player.jumpTime > 1/4) {
       player.jumping = false;
       player.frameTimer = 0;
     }
   }
   player.dashedThisFrame = false;
+  
+  if (keyIsDown(68)) { // d
+    if (lv.x < player.maxSpeed) {
+      //player.body.applyForce(Vec2(player.acceleration, 0), p, true);
+      let s = player.acceleration;
+      player.body.applyForce(Vec2.scaleFn(s, s)(tangent), p, true);
+    }
+  }
+  if (keyIsDown(65)) { //a
+    if (lv.x > -player.maxSpeed) {
+      //player.body.applyForce(Vec2(-player.acceleration, 0), p, true);
+      let s = -player.acceleration;
+      player.body.applyForce(Vec2.scaleFn(s, s)(tangent), p, true);
+    }
+  }
+
+  player.running = false;
+  if (abs(lv.x) > 1) {
+    player.dir = lv.x < 0 ? -1 : 1;
+    player.running = true;
+  }
 
   let rj = player.ropeJoint;
   if (rj) {
@@ -399,6 +426,17 @@ player.keyPressed = function() {
       break;
     case 84: // t
       player.teleport(0, -10000 - 200);
+      break;
+    case 74: // j
+      let p = player.body.getWorldPoint(Vec2(0, 0));
+      let p2 = Vec2(p.x, p.y + 100/meterScale);
+      player.rayCast.reset();
+      world.rayCast(p, p2, player.rayCast.callback);
+      if (player.rayCast.hit) {
+        let normal = player.rayCast.normal;
+        let tangent = Vec2(-normal.y, normal.x);
+        player.body.applyLinearImpulse(Vec2.scaleFn(10, 10)(tangent), p, true);
+      }
       break;
   }
 }

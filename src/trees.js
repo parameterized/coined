@@ -168,7 +168,7 @@ trees.update = function(dt) {
         let v = treeList[tli];
         v.update(dt);
         if (v.fallTimer < 0) {
-          player.wood++;
+          player.wood += 4;
           delete treeList[tli];
         }
       }

@@ -3,35 +3,16 @@ var earth = {};
 
 earth.camTile = {x: 0, y: 0};
 earth.tileSize = 50;
-earth.mapSize = 256;
-//earth.density = {};
 earth.tiles = {};
 earth.modified = {};
 
 earth.load = function() {
   let ts = earth.tileSize;
-  //earth.generate();
   earth.camTile = {x: floor(cam.x/ts), y: floor(cam.y/ts)};
   earth.updateWindow();
 }
 
-/*
-earth.generate = function() {
-  let ms2 = floor(earth.mapSize/2);
-  for (let i=-ms2; i < ms2; i++) {
-    earth.density[i] = {};
-    for (let _j=-ms2; _j < ms2; _j++) {
-      let j = _j + floor(ms2/2);
-      let x = i*earth.tileSize, y = j*earth.tileSize;
-      let h = noise(x/800)*400;
-      let d = constrain((y - h)/400 + 0.5, 0, 1);
-      earth.density[i][j] = d;
-    }
-  }
-}
-*/
-
-earth.sample = function(i, j) {
+earth.sampleRect = function(i, j) {
   if (earth.modified[i] && earth.modified[i][j]) {
     return earth.modified[i][j];
   } else {
@@ -62,16 +43,35 @@ earth.sample = function(i, j) {
     return {density: d, type: type};
   }
 }
-/*
-earth.sample = function(i, j) {
+
+earth.sampleCross = function(i, j) {
   if (earth.modified[i] && earth.modified[i][j]) {
     return earth.modified[i][j];
   } else {
     let x = i*earth.tileSize, y = j*earth.tileSize;
-    let d = 0;
-    if (earth.density[i] && earth.density[i][j]) {
-      d = earth.density[i][j];
+
+    let h = noise(x/800)*400;
+    let d = constrain((y - h)/400 + 0.5, 0, 1);
+    d = 1;
+
+    let x2 = x/4800, y2 = y/4800;
+    let _x2 = x2, _y2 = y2;
+    x2 += noise(_x2, _y2)*0.6 - 0.3;
+    y2 += noise(_x2 + 1000, _y2 + 1000)*0.6 - 0.3;
+    x2 = x2 % 1;
+    y2 = (y2*2) % 1;
+    let d2 = abs(x2 - y2)/sqrt(2);
+    d2 = smin(d2, abs(x2 - y2 + 1)/sqrt(2), 0.1);
+    d2 = smin(d2, abs(x2 - y2 - 1)/sqrt(2), 0.1);
+    d2 = smin(d2, abs(x2 + y2)/sqrt(2), 0.1);
+    d2 = smin(d2, abs(x2 + y2 - 1)/sqrt(2), 0.1);
+    d2 = smin(d2, abs(x2 + y2 - 2)/sqrt(2), 0.1);
+    d2 *= 10;
+    d = smin(d, d2, 0.1);
+    if (y < 0) {
+      d = 0;
     }
+
     let type;
     if (y < 600) {
       type = 'grass';
@@ -86,7 +86,8 @@ earth.sample = function(i, j) {
     return {density: d, type: type};
   }
 }
-*/
+
+earth.sample = earth.sampleRect;
 
 earth.bomb = function(x, y) {
   let ts = earth.tileSize;

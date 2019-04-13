@@ -3,7 +3,18 @@ var portal = {}
 
 portal.load = function() {
   portal.x = 100*PI + 264;
-  portal.y = -70;
+  earth.updateTile(11, -1);
+  let edge = earth.tiles[11][-1].edges[0];
+  let x1 = edge[0].x, y1 = edge[0].y, x2 = edge[1].x, y2 = edge[1].y;
+  if (x2 < x1) {
+    let tx = x1, ty = y1;
+    x1 = x2, y1 = y2;
+    x2 = tx, y2 = ty;
+  }
+  let m = (y2 - y1)/(x2 - x1);
+  let b = y1 - m*x1;
+  let ts = earth.tileSize;
+  portal.y = -ts + m*(portal.x - ts*11) + b - 52;
 }
 
 portal.inRange = function() {
@@ -15,9 +26,15 @@ portal.inRange = function() {
 }
 
 portal.keyPressed = function() {
-  if (keyCode === 69 && portal.inRange()) { // e
+  if (keyCode === 69 && portal.inRange() && player.coins >= 24) { // e
+    player.coins -= 24;
     player.teleport(0, 0, function() {
       player.resetPosition();
+      if (earth.sample === earth.sampleRect) {
+        earth.sample = earth.sampleCross;
+      } else {
+        earth.sample = earth.sampleRect;
+      }
       for (let i in earth.tiles) {
         for (let j in earth.tiles[i]) {
           earth.removeTile(i, j);
@@ -26,6 +43,8 @@ portal.keyPressed = function() {
       earth.tiles = {};
       earth.modified = {};
       earth.updateWindow();
+      coinMachine.load();
+      portal.load();
       // todo: updateWindow functions
       trees.tiles = {};
       trees.update(0);
@@ -54,13 +73,16 @@ portal.draw = function() {
   image(sheet, round(-spriteW/2), round(-spriteH/2),
     spriteW, spriteH, framePos.x, framePos.y, spriteW, spriteH);
   if (portal.inRange()) {
-    fill(128, 128, 128, 100);
-    rect(-56, -78, 112, 20);
-    noStroke();
-    fill(0);
     textAlign(CENTER, CENTER);
     textSize(18);
-    text('Reload world', 0, -66);
+    let s = 'Switch World (24 coins)';
+    fill(128, 128, 128, 100);
+    let w = textWidth(s);
+    rect(round(-w/2 - 2), -78, w + 4, 20);
+    noStroke();
+    fill(0);
+    text(s, 0, -66);
+    stroke(0);
   }
   pop();
 }

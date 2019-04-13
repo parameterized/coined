@@ -3,7 +3,18 @@ var coinMachine = {}
 
 coinMachine.load = function() {
   coinMachine.x = 100*PI - 90;
-  coinMachine.y = -32;
+  earth.updateTile(4, -1);
+  let edge = earth.tiles[4][-1].edges[0];
+  let x1 = edge[0].x, y1 = edge[0].y, x2 = edge[1].x, y2 = edge[1].y;
+  if (x2 < x1) {
+    let tx = x1, ty = y1;
+    x1 = x2, y1 = y2;
+    x2 = tx, y2 = ty;
+  }
+  let m = (y2 - y1)/(x2 - x1);
+  let b = y1 - m*x1;
+  let ts = earth.tileSize;
+  coinMachine.y = -ts + m*(coinMachine.x - ts*4) + b - 20;
 }
 
 coinMachine.inRange = function() {
@@ -23,7 +34,7 @@ coinMachine.keyPressed = function() {
       for (let i=0; i < numCoins; i++) {
         setTimeout(function() {
           coins.spawn(coinMachine.x, coinMachine.y);
-        }, i*100);
+        }, i*1000/numCoins);
       }
       sfx.anvil.play();
       player.gold -= numCoins/6;
@@ -33,7 +44,7 @@ coinMachine.keyPressed = function() {
 }
 
 coinMachine.draw = function() {
-  let x = coinMachine.x, y = coinMachine.y;
+  let x = round(coinMachine.x), y = round(coinMachine.y);
   fill(106, 107, 131);
   if (coinMachine.inRange()) {
     stroke(255);

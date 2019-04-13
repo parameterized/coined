@@ -32,6 +32,11 @@ function orDefault(x, d) {
   }
 }
 
+function smin(a, b, k) {
+	let h = constrain(0.5 + 0.5*(b - a)/k, 0, 1);
+	return lerp(b, a, h) - k*h*(1 - h);
+}
+
 var ease = {
   inQuad: function (t) { return t*t },
   outQuad: function (t) { return t*(2-t) },
