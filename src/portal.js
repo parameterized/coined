@@ -5,16 +5,20 @@ portal.load = function() {
   portal.x = 100*PI + 264;
   earth.updateTile(11, -1);
   let edge = earth.tiles[11][-1].edges[0];
-  let x1 = edge[0].x, y1 = edge[0].y, x2 = edge[1].x, y2 = edge[1].y;
-  if (x2 < x1) {
-    let tx = x1, ty = y1;
-    x1 = x2, y1 = y2;
-    x2 = tx, y2 = ty;
+  if (edge) {
+    let x1 = edge[0].x, y1 = edge[0].y, x2 = edge[1].x, y2 = edge[1].y;
+    if (x2 < x1) {
+      let tx = x1, ty = y1;
+      x1 = x2, y1 = y2;
+      x2 = tx, y2 = ty;
+    }
+    let m = (y2 - y1)/(x2 - x1);
+    let b = y1 - m*x1;
+    let ts = earth.tileSize;
+    portal.y = -ts + m*(portal.x - ts*11) + b - 52;
+  } else {
+    portal.y = -52;
   }
-  let m = (y2 - y1)/(x2 - x1);
-  let b = y1 - m*x1;
-  let ts = earth.tileSize;
-  portal.y = -ts + m*(portal.x - ts*11) + b - 52;
 }
 
 portal.inRange = function() {
@@ -32,8 +36,24 @@ portal.keyPressed = function() {
       player.resetPosition();
       if (earth.sample === earth.sampleRect) {
         earth.sample = earth.sampleCross;
+      } else if (earth.sample === earth.sampleCross) {
+        earth.sample = earth.sampleVoronoi;
       } else {
         earth.sample = earth.sampleRect;
+        if (!menu.showedEnd) {
+          gameState = 'menu';
+          menu.state = 'end';
+          let date = new Date(round(time)*1000);
+          let timeStr = '';
+          if (date.getUTCHours() > 0) {
+            timeStr += date.getUTCHours() + 'h';
+          }
+          timeStr += date.getUTCMinutes() + 'm';
+          timeStr += date.getUTCSeconds() + 's';
+          menu.addLabel({state: 'end', text: 'Completed in: ' + timeStr, y: 200});
+          menu.showedEnd = true;
+          ambience.pause();
+        }
       }
       for (let i in earth.tiles) {
         for (let j in earth.tiles[i]) {
@@ -52,6 +72,8 @@ portal.keyPressed = function() {
       plants.update(0);
       rocks.tiles = {};
       rocks.update(0);
+      infoBot.load();
+      infoBot.speak();
     });
   }
 }
@@ -69,13 +91,17 @@ portal.draw = function() {
   let sheet = gfx.portalSheet;
   if (portal.inRange()) {
     sheet = gfx.portalHighlightSheet;
+    if (!infoBot.sawPortal) {
+      infoBot.speak();
+      infoBot.sawPortal = true;
+    }
   }
   image(sheet, round(-spriteW/2), round(-spriteH/2),
     spriteW, spriteH, framePos.x, framePos.y, spriteW, spriteH);
   if (portal.inRange()) {
     textAlign(CENTER, CENTER);
     textSize(18);
-    let s = 'Switch World (24 coins)';
+    let s = 'Next World (24 coins)';
     fill(128, 128, 128, 100);
     let w = textWidth(s);
     rect(round(-w/2 - 2), -78, w + 4, 20);

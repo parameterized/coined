@@ -5,16 +5,20 @@ coinMachine.load = function() {
   coinMachine.x = 100*PI - 90;
   earth.updateTile(4, -1);
   let edge = earth.tiles[4][-1].edges[0];
-  let x1 = edge[0].x, y1 = edge[0].y, x2 = edge[1].x, y2 = edge[1].y;
-  if (x2 < x1) {
-    let tx = x1, ty = y1;
-    x1 = x2, y1 = y2;
-    x2 = tx, y2 = ty;
+  if (edge) {
+    let x1 = edge[0].x, y1 = edge[0].y, x2 = edge[1].x, y2 = edge[1].y;
+    if (x2 < x1) {
+      let tx = x1, ty = y1;
+      x1 = x2, y1 = y2;
+      x2 = tx, y2 = ty;
+    }
+    let m = (y2 - y1)/(x2 - x1);
+    let b = y1 - m*x1;
+    let ts = earth.tileSize;
+    coinMachine.y = -ts + m*(coinMachine.x - ts*4) + b - 20;
+  } else {
+    coinMachine.y = -20;
   }
-  let m = (y2 - y1)/(x2 - x1);
-  let b = y1 - m*x1;
-  let ts = earth.tileSize;
-  coinMachine.y = -ts + m*(coinMachine.x - ts*4) + b - 20;
 }
 
 coinMachine.inRange = function() {
@@ -39,6 +43,10 @@ coinMachine.keyPressed = function() {
       sfx.anvil.play();
       player.gold -= numCoins/6;
       player.wood -= numCoins/3;
+      if (!infoBot.sawUseCoinMachine) {
+        infoBot.speak();
+        infoBot.sawUseCoinMachine = true;
+      }
     }
   }
 }
@@ -67,8 +75,8 @@ coinMachine.draw = function() {
     textSize(18);
     let maxCoins = player.gold*6;
     let coins = floor(min(player.gold*6, player.wood*3)/6)*6;
-    let s = '(' + player.wood + '/' + maxCoins/3 + ') wood\n';
-    s += player.gold + ' gold\n';
+    let s = player.gold + ' gold\n';
+    s += '(' + player.wood + '/' + maxCoins/3 + ') wood\n';
     s += '(' + coins + '/' + maxCoins + ') coins\n';
     text(s, x, y - 100);
     stroke(0);

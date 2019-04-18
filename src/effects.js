@@ -18,16 +18,16 @@ Effect.prototype.update = function(dt) {
 }
 
 Effect.prototype.draw = function() {
-  fill(0, 0, 0);
+  push();
   translate(this.x, this.y);
   rotate(this.a);
+  fill(0);
   let t = constrain((time - this.spawnTime)/this.life, 0, 1);
   let t2 = pow(1-t, 3);
   rect(30 - t2*30 + t*10 + 4, -8, t2*30, 2);
   rect(30 - t2*30 + t*10, -1, t2*30, 2);
   rect(30 - t2*30 + t*10 + 4, 6, t2*30, 2);
-  rotate(-this.a);
-  translate(-this.x, -this.y);
+  pop();
 }
 
 

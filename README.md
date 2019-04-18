@@ -3,7 +3,7 @@
 
 Resource Gathering Browser Game
 
-![](https://i.imgur.com/kqGMi9M.png)
+![](https://i.imgur.com/Y9LwkFX.png)
 
 ## Playing
 Coined is currently being developed on [repl.it](https://repl.it/@parameterized/Coined)
@@ -11,6 +11,7 @@ Coined is currently being developed on [repl.it](https://repl.it/@parameterized/
 You can play on github [here](https://parameterized.github.io/coined/) or run locally with something like `python -m http.server`
 
 ## Controls
+- Return to menu: Esc
 - Movement: A/D
 - Jump: Space
 - Use active item: Left click

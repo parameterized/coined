@@ -8,3 +8,12 @@ canvas {
   display: block;
   margin: 50px auto;
 }
+
+#sketch-credits {
+  width: 800px;
+  margin: 0 auto;
+}
+
+#credits {
+  float: right;
+}

@@ -2,11 +2,12 @@
 var menu = {};
 
 menu.state = 'main';
-menu.labels = {'main': [], 'options': []};
-menu.buttons = {'main': [], 'options': []};
-menu.sliders = {'main': [], 'options': []};
+menu.labels = {'main': [], 'options': [], 'end': []};
+menu.buttons = {'main': [], 'options': [], 'end': []};
+menu.sliders = {'main': [], 'options': [], 'end': []};
 
 menu.heldSlider = null;
+menu.showedEnd = false;
 
 menu.addLabel = function(t) {
   t.state = orDefault(t.state, 'main');
@@ -47,6 +48,7 @@ menu.load = function() {
   menu.addLabel({state: 'main', text: 'Coined', textSize: 48, y: 150});
   menu.addButton({state: 'main', text: 'Play', y: 300, action: function() {
     gameState = 'playing';
+    ambience.play();
   }});
   menu.addButton({state: 'main', text: 'Options', y: 400, action: function() {
     menu.state = 'options';
@@ -58,6 +60,14 @@ menu.load = function() {
   menu.volumeSlider = menu.addSlider({state: 'options', y: 250, val: 2/3});
   menu.addButton({state: 'options', text: 'Back', x: 600, y: 500, action: function() {
     menu.state = 'main';
+  }});
+
+  menu.addLabel({state: 'end', text: 'Thanks for playing!', textSize: 40, y: 100});
+  //menu.addLabel({state: 'end', text: 'Completed in: 0m00s', y: 200});
+  menu.addButton({state: 'end', text: 'Continue', y: 300, action: function() {
+    gameState = 'playing';
+    menu.state = 'main';
+    ambience.play();
   }});
 }
 

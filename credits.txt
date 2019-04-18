@@ -1,4 +1,6 @@
 
+Developed by https://repl.it/@parameterized
+
 Graphics:
 
 playerSheet: https://rvros.itch.io/animated-pixel-hero
@@ -18,3 +20,6 @@ dirt: https://freesound.org/people/dr19/sounds/353907/
 rock: https://freesound.org/people/damsur/sounds/443243/
 gold: https://freesound.org/people/FullMetalJedi/sounds/427784/
 anvil: https://freesound.org/people/MrAuralization/sounds/274846/
+forestAmbience: https://freesound.org/people/bajko/sounds/385279/
+caveAmbience: https://freesound.org/people/blaukreuz/sounds/79707/
+wind: https://freesound.org/people/Fabrizio84/sounds/457667/

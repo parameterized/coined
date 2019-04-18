@@ -34,20 +34,36 @@ function preload() {
   sfx.anvil = loadSound('sfx/anvil.wav');
   sfx.teleport = loadSound('sfx/teleport.wav');
   sfx.teleport.setVolume(0.4);
+  sfx.forestAmbience = loadSound('sfx/forestAmbience.mp3');
+  sfx.forestAmbience.setLoop(true);
+  sfx.forestAmbience.setVolume(0);
+  sfx.caveAmbience = loadSound('sfx/caveAmbience.mp3');
+  sfx.caveAmbience.setLoop(true);
+  sfx.caveAmbience.setVolume(0);
+  sfx.wind = loadSound('sfx/wind.mp3');
+  sfx.wind.setLoop(true);
+  sfx.wind.setVolume(0);
 }
 
 function setup() {
-  createCanvas(ssx, ssy);
+  let canvas = createCanvas(ssx, ssy);
+  canvas.parent('sketch');
   $('canvas').bind('contextmenu', function(e) {
     return false;
+  });
+  $('canvas').bind('mousedown', function(e) {
+    if (e.detail > 1) {
+      e.preventDefault();
+    }
   });
   strokeJoin(ROUND);
   noiseSeed(0);
   menu.load();
   physics.load();
-  player.load();
   cam.load();
   earth.load();
+  player.load();
+  infoBot.load();
   coinMachine.load();
   portal.load();
   tutorial.load();
@@ -55,13 +71,14 @@ function setup() {
 
 function update() {
   let dt = min(1/frameRate(), 1/4);
-  time += dt;
   document.body.style.cursor = 'default';
   if (gameState === 'menu') {
     menu.update(dt);
   } else if (gameState == 'playing') {
+    time += dt;
     world.step(dt)
     player.update(dt);
+    infoBot.update(dt);
     cam.update(dt);
     effects.update(dt);
     earth.update(dt);
@@ -69,6 +86,7 @@ function update() {
     plants.update(dt);
     rocks.update(dt);
     coins.update(dt);
+    ambience.update(dt);
   }
 }
 
@@ -110,13 +128,15 @@ function keyPressed() {
     switch (keyCode) {
       case 27: // escape
         gameState = 'menu';
+        ambience.pause();
         break;
       case 75: // k
         let wmx = constrain(mouseX, 0, 800) - 400 + cam.x;
         let wmy = constrain(mouseY, 0, 600) - 300 + cam.y;
         let ts = earth.tileSize;
         console.log(floor(wmx/ts), floor(wmy/ts));
-        coins.spawn(wmx, wmy);
+        //coins.spawn(wmx, wmy);
+        infoBot.speak();
         break;
     }
   }
@@ -141,6 +161,7 @@ function draw() {
     portal.draw();
     effects.draw();
     player.draw();
+    infoBot.draw();
     plants.draw();
     rocks.draw();
     coins.draw();
@@ -149,6 +170,13 @@ function draw() {
       ellipse(player.pickaxePoint.x, player.pickaxePoint.y, 10, 10);
     }
     cam.reset();
+
+    let pos = player.body.getPosition();
+    let px = pos.x*meterScale, py = pos.y*meterScale;
+    noStroke();
+    fill(0, constrain((py - 2000)/8000*255, 0, 100));
+    rect(0, 0, ssx, ssy);
+
     ui.draw();
   }
 }

@@ -16,15 +16,17 @@ tutorial.draw = function() {
   drawBody(tutorial.ground);
   fill(128, 128, 128, 100);
   let y = -10000;
-  rect(-90, y - 250, 180, 32);
-  rect(120, y - 320, 320, 250);
+  rect(-90, y - 250, 180, 52);
+  rect(120, y - 328, 320, 266);
   noStroke();
   fill(0);
   textAlign(CENTER, CENTER);
   textSize(16);
   text('Press R to skip tutorial', 0, y - 250 + 16);
+  text('(or jump off)', 0, y - 240 + 30);
   let s = 'Controls:\n\n';
 
+  s += 'Return to menu: Esc\n';
   s += 'Movement: A/D\n';
   s += 'Jump: Space\n';
   s += 'Use active item: Left click\n';
@@ -35,6 +37,6 @@ tutorial.draw = function() {
   s += 'Return to tutorial: T\n';
   s += 'Use object: E';
   textAlign(CENTER, TOP);
-  text(s, 280, y - 300);
+  text(s, 280, y - 308);
   stroke(0);
 }

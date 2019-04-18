@@ -94,6 +94,8 @@ player.resetPosition = function(x, y) {
   player.dashed = true;
   player.resetGrapple();
   cam.x = x, cam.y = y;
+  infoBot.x = x - 60;
+  infoBot.y = y + 40;
 }
 
 player.teleport = function(x, y, action) {
@@ -101,6 +103,10 @@ player.teleport = function(x, y, action) {
   y = orDefault(y, player.spawnY);
   player.teleportAction = orDefault(action, function() {
     player.resetPosition(x, y);
+    if (!infoBot.sawTeleport) {
+      infoBot.speak();
+      infoBot.sawTeleport = true;
+    }
   });
   player.teleporting = true;
   player.teleportTimer = 1;
@@ -215,6 +221,10 @@ player.update = function(dt) {
                 }
                 if (v.life <= 0) {
                   sfx.treeFall.play();
+                  if (!infoBot.sawTreeFall) {
+                    infoBot.speak();
+                    infoBot.sawTreeFall = true;
+                  }
                 }
                 sfx.treeChop.play();
               }
@@ -339,6 +349,10 @@ player.mousePressed = function() {
       player.dashedThisFrame = true;
       effects.new({x: px, y: py, a: atan2(dx, -dy) + PI/2});
       sfx.dash.play();
+      if (!infoBot.sawDash) {
+        infoBot.speak();
+        infoBot.sawDash = true;
+      }
       player.frame = 10;
       player.frameTimer = 1;
     }
@@ -362,6 +376,10 @@ player.mousePressed = function() {
         player.dashed = false;
       }
       sfx.grapple.play();
+      if (!infoBot.sawGrapple) {
+        infoBot.speak();
+        infoBot.sawGrapple = true;
+      }
     }
   }
 }
@@ -407,6 +425,10 @@ player.keyPressed = function() {
       } else if (!player.doubleJumped) {
         player.jump();
         player.doubleJumped = true;
+        if (!infoBot.sawDoubleJump) {
+          infoBot.speak();
+          infoBot.sawDoubleJump = true;
+        }
       }
       break;
     case 17: // ctrl
@@ -426,17 +448,6 @@ player.keyPressed = function() {
       break;
     case 84: // t
       player.teleport(0, -10000 - 200);
-      break;
-    case 74: // j
-      let p = player.body.getWorldPoint(Vec2(0, 0));
-      let p2 = Vec2(p.x, p.y + 100/meterScale);
-      player.rayCast.reset();
-      world.rayCast(p, p2, player.rayCast.callback);
-      if (player.rayCast.hit) {
-        let normal = player.rayCast.normal;
-        let tangent = Vec2(-normal.y, normal.x);
-        player.body.applyLinearImpulse(Vec2.scaleFn(10, 10)(tangent), p, true);
-      }
       break;
   }
 }
